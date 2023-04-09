@@ -1,18 +1,3 @@
-type anon_class_13_1 = 
- service {
-   addCardCollection: (CardCollectionArgs, vec CardArgs) -> (Result);
-   addNewAdmin: (vec principal) -> (Result_6);
-   deleteCard: (text) -> (Result_5);
-   deleteCardCollection: (text) -> (Result);
-   getAllCollections: () -> (Result_2) query;
-   getCard: (CardArgs) -> (Result_4) query;
-   getCardCollection: (text) -> (Result_3) query;
-   getCollectionsByQuery: (text) -> (Result_2) query;
-   testQueryA: (CardCollectionArgs) -> ();
-   testQueryB: (vec CardArgs) -> ();
-   updateCard: (CardArgs) -> (Result_1);
-   updateCardCollection: (CardCollectionArgs, vec CardArgs) -> (Result);
- };
 type Value__1 = 
  variant {
    Array: vec Value__1;
@@ -209,4 +194,17 @@ type Card =
    thumbnail: text;
    url: text;
  };
-service : (InitOptions) -> anon_class_13_1
+service : {
+  addCardCollection: (CardCollectionArgs, vec CardArgs) -> (Result);
+  addNewAdmin: (vec principal) -> (Result_6);
+  deleteCard: (text) -> (Result_5);
+  deleteCardCollection: (text) -> (Result);
+  getAllCollections: () -> (Result_2) query;
+  getCard: (CardArgs) -> (Result_4) query;
+  getCardCollection: (text) -> (Result_3) query;
+  getCollectionsByQuery: (text) -> (Result_2) query;
+  testQueryA: (CardCollectionArgs) -> ();
+  testQueryB: (vec CardArgs) -> ();
+  updateCard: (CardArgs) -> (Result_1);
+  updateCardCollection: (CardCollectionArgs, vec CardArgs) -> (Result);
+}
