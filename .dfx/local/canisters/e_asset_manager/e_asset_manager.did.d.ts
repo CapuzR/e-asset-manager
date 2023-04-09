@@ -1,6 +1,10 @@
 import type { Principal } from '@dfinity/principal';
 import type { ActorMethod } from '@dfinity/agent';
 
+export type AuthArgs = { 'Auth' : RequestArgs } |
+  { 'GameServer' : RequestArgs } |
+  { 'Admin' : RequestArgs } |
+  { 'AllowedUsers' : RequestArgs };
 export interface Card {
   'url' : string,
   'thumbnail' : string,
@@ -66,7 +70,8 @@ export interface CardSuccess {
   'collectionName' : string,
 }
 export interface Checkbox { 'options' : Array<string> }
-export type Error = { 'NotAuthorized' : null };
+export type Error = { 'NotAuthorized' : null } |
+  { 'NonExistentRole' : null };
 export type FieldType = { 'TextField' : string } |
   { 'Range' : Array<bigint> } |
   { 'Checkbox' : Checkbox };
@@ -74,23 +79,35 @@ export type Filter = { 'BountyRush' : Array<FilterDetails> } |
   { 'Traits' : Array<FilterDetails> } |
   { 'ElementumGeneral' : Array<FilterDetails> };
 export interface FilterDetails { 'kind' : FieldType, 'name' : string }
-export interface InitOptions { 'admins' : Array<Principal> }
+export interface InitArgs {
+  'allowedUsers' : [] | [Array<Principal>],
+  'auth' : Array<Principal>,
+  'admins' : Array<Principal>,
+  'environment' : string,
+  'gameServers' : Array<Principal>,
+}
 export interface Property { 'value' : Value, 'name' : string }
 export interface Property__1 { 'value' : Value__1, 'name' : string }
+export type RequestArgs = { 'Add' : Array<Principal> } |
+  { 'IsIn' : Principal } |
+  { 'Remove' : Principal } |
+  { 'RemoveAll' : null } |
+  { 'GetAll' : null } |
+  { 'IsCallerIn' : null };
 export type Result = { 'ok' : null } |
   { 'err' : CardCollectionError };
 export type Result_1 = { 'ok' : null } |
   { 'err' : UpdateCardError };
-export type Result_2 = { 'ok' : Array<CardCollectionSuccess> } |
+export type Result_2 = { 'ok' : [] | [Array<Principal>] } |
+  { 'err' : Error };
+export type Result_3 = { 'ok' : Array<CardCollectionSuccess> } |
   { 'err' : CardCollectionError };
-export type Result_3 = { 'ok' : CardCollectionSuccess } |
+export type Result_4 = { 'ok' : CardCollectionSuccess } |
   { 'err' : CardCollectionError };
-export type Result_4 = { 'ok' : Card } |
-  { 'err' : CardError };
-export type Result_5 = { 'ok' : null } |
+export type Result_5 = { 'ok' : Card } |
   { 'err' : CardError };
 export type Result_6 = { 'ok' : null } |
-  { 'err' : Error };
+  { 'err' : CardError };
 export type UpdateCardError = { 'NotAuthorized' : null } |
   { 'Unknown' : string } |
   { 'NonExistentCard' : null };
@@ -132,18 +149,18 @@ export type Value__1 = { 'Int' : bigint } |
   { 'Principal' : Principal } |
   { 'Array' : Array<Value__1> } |
   { 'Class' : Array<Property__1> };
-export interface anon_class_13_1 {
+export interface anon_class_14_1 {
   'addCardCollection' : ActorMethod<
     [CardCollectionArgs, Array<CardArgs>],
     Result
   >,
-  'addNewAdmin' : ActorMethod<[Array<Principal>], Result_6>,
-  'deleteCard' : ActorMethod<[string], Result_5>,
+  'deleteCard' : ActorMethod<[string], Result_6>,
   'deleteCardCollection' : ActorMethod<[string], Result>,
-  'getAllCollections' : ActorMethod<[], Result_2>,
-  'getCard' : ActorMethod<[CardArgs], Result_4>,
-  'getCardCollection' : ActorMethod<[string], Result_3>,
-  'getCollectionsByQuery' : ActorMethod<[string], Result_2>,
+  'getAllCollections' : ActorMethod<[], Result_3>,
+  'getCard' : ActorMethod<[CardArgs], Result_5>,
+  'getCardCollection' : ActorMethod<[string], Result_4>,
+  'getCollectionsByQuery' : ActorMethod<[string], Result_3>,
+  'manageAuth' : ActorMethod<[AuthArgs], Result_2>,
   'testQueryA' : ActorMethod<[CardCollectionArgs], undefined>,
   'testQueryB' : ActorMethod<[Array<CardArgs>], undefined>,
   'updateCard' : ActorMethod<[CardArgs], Result_1>,
@@ -152,4 +169,4 @@ export interface anon_class_13_1 {
     Result
   >,
 }
-export interface _SERVICE extends anon_class_13_1 {}
+export interface _SERVICE extends anon_class_14_1 {}

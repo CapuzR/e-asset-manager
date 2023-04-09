@@ -1,47 +1,3 @@
-type Value__1 = 
- variant {
-   Array: vec Value__1;
-   Blob: blob;
-   Bool: bool;
-   Bytes: vec nat8;
-   Class: vec Property__1;
-   Float: float64;
-   Int: int;
-   Int16: int16;
-   Int32: int32;
-   Int64: int64;
-   Int8: int8;
-   Nat: nat;
-   Nat16: nat16;
-   Nat32: nat32;
-   Nat64: nat64;
-   Nat8: nat8;
-   Option: opt Value__1;
-   Principal: principal;
-   Text: text;
- };
-type Value = 
- variant {
-   Array: vec Value;
-   Blob: blob;
-   Bool: bool;
-   Bytes: vec nat8;
-   Class: vec Property;
-   Float: float64;
-   Int: int;
-   Int16: int16;
-   Int32: int32;
-   Int64: int64;
-   Int8: int8;
-   Nat: nat;
-   Nat16: nat16;
-   Nat32: nat32;
-   Nat64: nat64;
-   Nat8: nat8;
-   Option: opt Value;
-   Principal: principal;
-   Text: text;
- };
 type UpdateCardError = 
  variant {
    NonExistentCard;
@@ -83,57 +39,20 @@ type Result =
    err: CardCollectionError;
    ok;
  };
-type Property__1 = 
- record {
-   name: text;
-   value: Value__1;
- };
-type Property = 
- record {
-   name: text;
-   value: Value;
- };
 type InitOptions = record {admins: vec principal;};
-type FilterDetails = 
- record {
-   kind: FieldType;
-   name: text;
- };
-type Filter = 
- variant {
-   BountyRush: vec FilterDetails;
-   ElementumGeneral: vec FilterDetails;
-   Traits: vec FilterDetails;
- };
-type FieldType = 
- variant {
-   Checkbox: Checkbox;
-   Range: vec nat;
-   TextField: text;
- };
 type Error = variant {NotAuthorized;};
-type Checkbox = record {options: vec text;};
 type CardSuccess = 
  record {
+   action: opt text;
+   amount: opt nat;
    collectionName: text;
    id: text;
    index: nat;
+   luck: opt nat;
    mimeType: text;
-   stats: vec CardStats;
+   target: opt text;
    thumbnail: text;
    url: text;
- };
-type CardStats__1 = 
- variant {
-   BountyRush: vec Property__1;
-   ElementumGeneral: vec Property__1;
-   Traits: vec Property__1;
- };
-type CardStats = 
- variant {
-   BountyRush: vec Property;
-   ElementumGeneral: vec Property;
-   Traits: vec Property;
  };
 type CardError = 
  variant {
@@ -147,7 +66,6 @@ type CardCollectionSuccess =
    cards: vec CardSuccess;
    collectionId: text;
    description: text;
-   filters: vec Filter;
    haveMultipleAC: bool;
    kind: text;
    loreContext: text;
@@ -166,7 +84,6 @@ type CardCollectionArgs =
    batchUpdate: bool;
    collectionId: text;
    description: text;
-   filters: vec Filter;
    haveMultipleAC: bool;
    kind: text;
    loreContext: text;
@@ -175,22 +92,28 @@ type CardCollectionArgs =
  };
 type CardArgs = 
  record {
+   action: opt text;
+   amount: opt nat;
    collectionId: text;
    collectionName: text;
    id: text;
    index: nat;
+   luck: opt nat;
    mimeType: text;
-   stats: vec CardStats;
+   target: opt text;
    thumbnail: text;
    url: text;
  };
 type Card = 
  record {
+   action: opt text;
+   amount: opt nat;
    collectionId: text;
    collectionName: text;
    index: nat;
+   luck: opt nat;
    mimeType: text;
-   stats: vec CardStats__1;
+   target: opt text;
    thumbnail: text;
    url: text;
  };
@@ -203,8 +126,6 @@ service : {
   getCard: (CardArgs) -> (Result_4) query;
   getCardCollection: (text) -> (Result_3) query;
   getCollectionsByQuery: (text) -> (Result_2) query;
-  testQueryA: (CardCollectionArgs) -> ();
-  testQueryB: (vec CardArgs) -> ();
   updateCard: (CardArgs) -> (Result_1);
   updateCardCollection: (CardCollectionArgs, vec CardArgs) -> (Result);
 }

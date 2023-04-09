@@ -68,7 +68,13 @@ type Value__1 =
     #Text : Text
   };
 actor {
-  stable var admins : [Principal];
+  stable var authState :
+    {
+      var admins : [Principal];
+      var allowedUsers : ?[Principal];
+      var auth : [Principal];
+      var gameServers : [Principal]
+    };
   stable var cardCollections :
     {
       #branch : Branch<Text, CardCollection>;

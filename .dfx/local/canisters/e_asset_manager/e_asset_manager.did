@@ -1,13 +1,13 @@
-type anon_class_13_1 = 
+type anon_class_14_1 = 
  service {
    addCardCollection: (CardCollectionArgs, vec CardArgs) -> (Result);
-   addNewAdmin: (vec principal) -> (Result_6);
-   deleteCard: (text) -> (Result_5);
+   deleteCard: (text) -> (Result_6);
    deleteCardCollection: (text) -> (Result);
-   getAllCollections: () -> (Result_2) query;
-   getCard: (CardArgs) -> (Result_4) query;
-   getCardCollection: (text) -> (Result_3) query;
-   getCollectionsByQuery: (text) -> (Result_2) query;
+   getAllCollections: () -> (Result_3) query;
+   getCard: (CardArgs) -> (Result_5) query;
+   getCardCollection: (text) -> (Result_4) query;
+   getCollectionsByQuery: (text) -> (Result_3) query;
+   manageAuth: (AuthArgs) -> (Result_2);
    testQueryA: (CardCollectionArgs) -> ();
    testQueryB: (vec CardArgs) -> ();
    updateCard: (CardArgs) -> (Result_1);
@@ -65,28 +65,28 @@ type UpdateCardError =
  };
 type Result_6 = 
  variant {
-   err: Error;
+   err: CardError;
    ok;
  };
 type Result_5 = 
  variant {
    err: CardError;
-   ok;
- };
-type Result_4 = 
- variant {
-   err: CardError;
    ok: Card;
  };
-type Result_3 = 
+type Result_4 = 
  variant {
    err: CardCollectionError;
    ok: CardCollectionSuccess;
  };
-type Result_2 = 
+type Result_3 = 
  variant {
    err: CardCollectionError;
    ok: vec CardCollectionSuccess;
+ };
+type Result_2 = 
+ variant {
+   err: Error;
+   ok: opt vec principal;
  };
 type Result_1 = 
  variant {
@@ -98,6 +98,15 @@ type Result =
    err: CardCollectionError;
    ok;
  };
+type RequestArgs = 
+ variant {
+   Add: vec principal;
+   GetAll;
+   IsCallerIn;
+   IsIn: principal;
+   Remove: principal;
+   RemoveAll;
+ };
 type Property__1 = 
  record {
    name: text;
@@ -108,7 +117,14 @@ type Property =
    name: text;
    value: Value;
  };
-type InitOptions = record {admins: vec principal;};
+type InitArgs = 
+ record {
+   admins: vec principal;
+   allowedUsers: opt vec principal;
+   auth: vec principal;
+   environment: text;
+   gameServers: vec principal;
+ };
 type FilterDetails = 
  record {
    kind: FieldType;
@@ -126,7 +142,11 @@ type FieldType =
    Range: vec nat;
    TextField: text;
  };
-type Error = variant {NotAuthorized;};
+type Error = 
+ variant {
+   NonExistentRole;
+   NotAuthorized;
+ };
 type Checkbox = record {options: vec text;};
 type CardSuccess = 
  record {
@@ -209,4 +229,11 @@ type Card =
    thumbnail: text;
    url: text;
  };
-service : (InitOptions) -> anon_class_13_1
+type AuthArgs = 
+ variant {
+   Admin: RequestArgs;
+   AllowedUsers: RequestArgs;
+   Auth: RequestArgs;
+   GameServer: RequestArgs;
+ };
+service : (InitArgs) -> anon_class_14_1
