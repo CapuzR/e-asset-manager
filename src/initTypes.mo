@@ -1,12 +1,8 @@
 
 module {
     
-    public type InitArgs = {
-        environment : Text;
-        allowedUsers : ?[Principal];
-        auth : [Principal];
+    public type InitOptions = {
         admins : [Principal];
-        gameServers : [Principal];
     };
 
 }

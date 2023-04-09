@@ -3,13 +3,7 @@ export const idlFactory = ({ IDL }) => {
   const Property__1 = IDL.Rec();
   const Value = IDL.Rec();
   const Value__1 = IDL.Rec();
-  const InitArgs = IDL.Record({
-    'allowedUsers' : IDL.Opt(IDL.Vec(IDL.Principal)),
-    'auth' : IDL.Vec(IDL.Principal),
-    'admins' : IDL.Vec(IDL.Principal),
-    'environment' : IDL.Text,
-    'gameServers' : IDL.Vec(IDL.Principal),
-  });
+  const InitOptions = IDL.Record({ 'admins' : IDL.Vec(IDL.Principal) });
   const Checkbox = IDL.Record({ 'options' : IDL.Vec(IDL.Text) });
   const FieldType = IDL.Variant({
     'TextField' : IDL.Text,
@@ -79,13 +73,15 @@ export const idlFactory = ({ IDL }) => {
     'NonExistentCardCollection' : IDL.Null,
   });
   const Result = IDL.Variant({ 'ok' : IDL.Null, 'err' : CardCollectionError });
+  const Error = IDL.Variant({ 'NotAuthorized' : IDL.Null });
+  const Result_6 = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
   const CardError = IDL.Variant({
     'NotAuthorized' : IDL.Null,
     'Unknown' : IDL.Text,
     'CardAlreadyExists' : IDL.Null,
     'NonExistentCard' : IDL.Null,
   });
-  const Result_6 = IDL.Variant({ 'ok' : IDL.Null, 'err' : CardError });
+  const Result_5 = IDL.Variant({ 'ok' : IDL.Null, 'err' : CardError });
   const CardSuccess = IDL.Record({
     'id' : IDL.Text,
     'url' : IDL.Text,
@@ -106,7 +102,7 @@ export const idlFactory = ({ IDL }) => {
     'haveMultipleAC' : IDL.Bool,
     'standard' : IDL.Text,
   });
-  const Result_3 = IDL.Variant({
+  const Result_2 = IDL.Variant({
     'ok' : IDL.Vec(CardCollectionSuccess),
     'err' : CardCollectionError,
   });
@@ -148,32 +144,10 @@ export const idlFactory = ({ IDL }) => {
     'index' : IDL.Nat,
     'collectionName' : IDL.Text,
   });
-  const Result_5 = IDL.Variant({ 'ok' : Card, 'err' : CardError });
-  const Result_4 = IDL.Variant({
+  const Result_4 = IDL.Variant({ 'ok' : Card, 'err' : CardError });
+  const Result_3 = IDL.Variant({
     'ok' : CardCollectionSuccess,
     'err' : CardCollectionError,
-  });
-  const RequestArgs = IDL.Variant({
-    'Add' : IDL.Vec(IDL.Principal),
-    'IsIn' : IDL.Principal,
-    'Remove' : IDL.Principal,
-    'RemoveAll' : IDL.Null,
-    'GetAll' : IDL.Null,
-    'IsCallerIn' : IDL.Null,
-  });
-  const AuthArgs = IDL.Variant({
-    'Auth' : RequestArgs,
-    'GameServer' : RequestArgs,
-    'Admin' : RequestArgs,
-    'AllowedUsers' : RequestArgs,
-  });
-  const Error = IDL.Variant({
-    'NotAuthorized' : IDL.Null,
-    'NonExistentRole' : IDL.Null,
-  });
-  const Result_2 = IDL.Variant({
-    'ok' : IDL.Opt(IDL.Vec(IDL.Principal)),
-    'err' : Error,
   });
   const UpdateCardError = IDL.Variant({
     'NotAuthorized' : IDL.Null,
@@ -181,19 +155,19 @@ export const idlFactory = ({ IDL }) => {
     'NonExistentCard' : IDL.Null,
   });
   const Result_1 = IDL.Variant({ 'ok' : IDL.Null, 'err' : UpdateCardError });
-  const anon_class_14_1 = IDL.Service({
+  const anon_class_13_1 = IDL.Service({
     'addCardCollection' : IDL.Func(
         [CardCollectionArgs, IDL.Vec(CardArgs)],
         [Result],
         [],
       ),
-    'deleteCard' : IDL.Func([IDL.Text], [Result_6], []),
+    'addNewAdmin' : IDL.Func([IDL.Vec(IDL.Principal)], [Result_6], []),
+    'deleteCard' : IDL.Func([IDL.Text], [Result_5], []),
     'deleteCardCollection' : IDL.Func([IDL.Text], [Result], []),
-    'getAllCollections' : IDL.Func([], [Result_3], ['query']),
-    'getCard' : IDL.Func([CardArgs], [Result_5], ['query']),
-    'getCardCollection' : IDL.Func([IDL.Text], [Result_4], ['query']),
-    'getCollectionsByQuery' : IDL.Func([IDL.Text], [Result_3], ['query']),
-    'manageAuth' : IDL.Func([AuthArgs], [Result_2], []),
+    'getAllCollections' : IDL.Func([], [Result_2], ['query']),
+    'getCard' : IDL.Func([CardArgs], [Result_4], ['query']),
+    'getCardCollection' : IDL.Func([IDL.Text], [Result_3], ['query']),
+    'getCollectionsByQuery' : IDL.Func([IDL.Text], [Result_2], ['query']),
     'testQueryA' : IDL.Func([CardCollectionArgs], [], []),
     'testQueryB' : IDL.Func([IDL.Vec(CardArgs)], [], []),
     'updateCard' : IDL.Func([CardArgs], [Result_1], []),
@@ -203,15 +177,9 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
   });
-  return anon_class_14_1;
+  return anon_class_13_1;
 };
 export const init = ({ IDL }) => {
-  const InitArgs = IDL.Record({
-    'allowedUsers' : IDL.Opt(IDL.Vec(IDL.Principal)),
-    'auth' : IDL.Vec(IDL.Principal),
-    'admins' : IDL.Vec(IDL.Principal),
-    'environment' : IDL.Text,
-    'gameServers' : IDL.Vec(IDL.Principal),
-  });
-  return [InitArgs];
+  const InitOptions = IDL.Record({ 'admins' : IDL.Vec(IDL.Principal) });
+  return [InitOptions];
 };

@@ -6,17 +6,15 @@ import Trie "mo:base/Trie";
 
 import IT "./initTypes";
 import OT "./opsTypes";
-import Rels "./modules/Rels";
+import Rels "./Rels/Rels";
 import ST "./stableTypes";
 import U "./utils";
-import Auth "./modules/Auth";
 
 shared ({ caller = owner }) actor class (
-  initArgs : IT.InitArgs,
+  initOptions : IT.InitOptions,
 ) = BRAssetManagement {
 
-  stable var authState = Auth.init(initArgs);
-  // stable var admins : [Principal] = initOptions.admins;
+  stable var admins : [Principal] = initOptions.admins;
 
   stable var cardCollections : Trie.Trie<Text, ST.CardCollection> = Trie.empty();
   stable var cards : Trie.Trie<Text, ST.Card> = Trie.empty();
@@ -39,12 +37,12 @@ shared ({ caller = owner }) actor class (
       };
     };
 
-    #ok(Buffer.toArray(cardCollBuff));
+    #ok(cardCollBuff.toArray());
   };
 
   public query ({ caller }) func getCollectionsByQuery(text : Text) : async Result.Result<[OT.CardCollectionSuccess], OT.CardCollectionError> {
 
-    if (not U.isAdmin(caller, authState.admins)) {
+    if (not U.isAdmin(caller, admins)) {
       return #err(#NotAuthorized);
     };
 
@@ -65,12 +63,12 @@ shared ({ caller = owner }) actor class (
       };
     };
 
-    #ok(Buffer.toArray(cardCollBuff));
+    #ok(cardCollBuff.toArray());
   };
 
   public query ({ caller }) func getCard(cardArgs : OT.CardArgs) : async Result.Result<ST.Card, OT.CardError> {
 
-    if (not U.isAdmin(caller, authState.admins)) {
+    if (not U.isAdmin(caller, admins)) {
       return #err(#NotAuthorized);
     };
 
@@ -79,7 +77,7 @@ shared ({ caller = owner }) actor class (
 
   public query ({ caller }) func getCardCollection(cardCollectionId : Text) : async Result.Result<OT.CardCollectionSuccess, OT.CardCollectionError> {
 
-    if (not U.isAdmin(caller, authState.admins)) {
+    if (not U.isAdmin(caller, admins)) {
       return #err(#NotAuthorized);
     };
 
@@ -88,7 +86,7 @@ shared ({ caller = owner }) actor class (
 
   public shared ({ caller }) func updateCard(cardArgs : OT.CardArgs) : async Result.Result<(), OT.UpdateCardError> {
 
-    if (not U.isAdmin(caller, authState.admins)) {
+    if (not U.isAdmin(caller, admins)) {
       return #err(#NotAuthorized);
     };
 
@@ -97,7 +95,7 @@ shared ({ caller = owner }) actor class (
 
   public shared ({ caller }) func updateCardCollection(cardCollectionArgs : OT.CardCollectionArgs, cardsArgsArr : [OT.CardArgs]) : async Result.Result<(), OT.CardCollectionError> {
 
-    if (not U.isAdmin(caller, authState.admins)) {
+    if (not U.isAdmin(caller, admins)) {
       return #err(#NotAuthorized);
     };
 
@@ -145,8 +143,8 @@ shared ({ caller = owner }) actor class (
   };
 
   public shared ({ caller }) func addCardCollection(cardCollectionArgs : OT.CardCollectionArgs, cardsArgsArr : [OT.CardArgs]) : async Result.Result<(), OT.CardCollectionError> {
-
-    if (not U.isAdmin(caller, authState.admins)) {
+    Debug.print(debug_show("lol"));
+    if (not U.isAdmin(caller, admins)) {
       return #err(#NotAuthorized);
     };
 
@@ -156,7 +154,7 @@ shared ({ caller = owner }) actor class (
 
   public shared ({ caller }) func deleteCard(cardId : Text) : async Result.Result<(), OT.CardError> {
 
-    if (not U.isAdmin(caller, authState.admins)) {
+    if (not U.isAdmin(caller, admins)) {
       return #err(#NotAuthorized);
     };
 
@@ -165,7 +163,7 @@ shared ({ caller = owner }) actor class (
 
   public shared ({ caller }) func deleteCardCollection(cardCollectionId : Text) : async Result.Result<(), OT.CardCollectionError> {
 
-    if (not U.isAdmin(caller, authState.admins)) {
+    if (not U.isAdmin(caller, admins)) {
       return #err(#NotAuthorized);
     };
 
@@ -357,7 +355,7 @@ shared ({ caller = owner }) actor class (
         };
 
         #ok({
-          cardCollection with cards = Buffer.toArray(cardBuff);
+          cardCollection with cards = cardBuff.toArray();
         });
       };
     };
@@ -386,16 +384,26 @@ shared ({ caller = owner }) actor class (
     collectionCardRel.getAll();
   };
 
-//-------------------Authentication
+  public shared ({ caller }) func addNewAdmin(principals : [Principal]) : async Result.Result<(), OT.Error> {
 
-    public shared({caller}) func manageAuth (authArgs : Auth.AuthArgs) : async Result.Result<?[Principal], Auth.Error> {
-        
-        if(not Auth.isAuthorized(caller, authState.admins)) {
-            return #err(#NotAuthorized);
-        };
-
-        #ok(Auth.manageAuth(authArgs, caller, authState));
+    if (not U.isAdmin(caller, admins)) {
+      return #err(#NotAuthorized);
     };
+
+    let adminsBuff : Buffer.Buffer<Principal> = Buffer.Buffer(0);
+
+    for (admin in admins.vals()) {
+      adminsBuff.add(admin);
+    };
+
+    for (principal in principals.vals()) {
+      adminsBuff.add(principal);
+    };
+
+    admins := adminsBuff.toArray();
+    return #ok(());
+
+  };
 
   system func preupgrade() {
     collectionCardRelEntries := getAllCollectionCardRels();
